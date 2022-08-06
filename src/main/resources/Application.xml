@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+<!--    Spring 的配置文件中主要是配置 Service 和 Dao ，另外还会涉及 数据源 事务等-->
+
+
+    <!--扫描Controller之外的其他注解-->
+    <context:component-scan base-package="com.usercom.crm" use-default-filters="true">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--声明数据源，链接数据库-->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${db.driver}"/>
+        <property name="url" value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+    </bean>
+    <!-- spring和mybatis的整合  SqlSessionFactoryBean 创建 SqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+
+    </bean>
+    <!-- mapper注解扫描器配置,扫描@MapperScan注解,自动生成代码对象 -->
+   <!-- <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.usercom.crm.settings.mapper,
+                                            com.usercom.crm.workbench.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>-->
+
+    <!--声明mybatis的mapper注解扫描器，扫描 @MapperScan注解 自动生成代码对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="scannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+      <property name="basePackage" value="com.usercom.crm.settings.mapper"/>
+    </bean>
+
+    <!--声明service的注解 @Service 所在包名位置-->
+    <!--<context:component-scan base-package=""/>-->
+
+    <!--声明工具类-->
+
+    <!--配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+     </bean>
+    <!--配置事务-->
+   <!-- <aop:config>
+        <aop:poincut expression="excution(* com.)" />
+
+    </aop:config>-->
+</beans>

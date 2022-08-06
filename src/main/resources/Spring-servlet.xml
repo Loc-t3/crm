@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <!-- dispatcherServlet截获所有URL请求 -->
+    <mvc:default-servlet-handler />
+
+    <!--<context:component-scan base-package="com.usercom.crm.controller"/>
+    <context:component-scan base-package="com.usercom.crm.settings.controller"/>-->
+
+<!--    和页面相关的配置 和 Contrller 相关的配置 都在此配置中进行配置-->
+    <!--手动只扫描Controller-->
+    <context:component-scan base-package="com.usercom.crm" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+
+    <!--会自动注册RequestMappingHandlerMapping与RequestMappingHandlerAdapter两个Bean,
+        这是Spring MVC为@Controller分发请求所必需的，并且提供了数据绑定支持-->
+   <mvc:annotation-driven/>
+
+
+
+    <!--读取静态自愿配置-->
+ <mvc:default-servlet-handler/>
+ <mvc:resources mapping="/**" location="/"/>
+    <!--<context:component-scan base-package=""/>-->
+    <!--配置视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--视图的前置-->
+       <!-- <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>-->
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+        <!--视图的后置-->
+    </bean>
+
+<!--    配置自定义拦截器-->
+    <!--<mvc:interceptors>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/settings/**"/>
+           <mvc:mapping path="/woekbench/**"/>
+&lt;!&ndash;&lt;!&ndash;            配置排除拦截的接口&ndash;&gt;&ndash;&gt;
+           <mvc:exclude-mapping path="/settings/qx/user/toLogin.do"/>
+         <mvc:exclude-mapping path="/settings/qx/user/login.do"/>
+            <bean class="com.usercom.crm.interceptor.LoginInterceptor"/>
+
+        </mvc:interceptor>
+    </mvc:interceptors>
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</beans>
