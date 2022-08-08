@@ -1,26 +1,19 @@
 package com.usercom.crm.settings.controller;
 
-import com.mysql.cj.Session;
-import com.sun.deploy.net.HttpResponse;
 import com.usercom.crm.commons.constant.constant;
 import com.usercom.crm.commons.domain.ReturnObject;
-import com.usercom.crm.commons.utils.DateUtil;
+import com.usercom.crm.commons.utils.DateUtils;
 import com.usercom.crm.settings.domain.User;
-import com.usercom.crm.settings.service.UserService;
 import com.usercom.crm.settings.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +55,7 @@ public class LoginController {
         }else{
             //进一步判断用户是否合法
             //对时效进行判断
-                 String format = DateUtil.formdateTime(new Date());
+                 String format = DateUtils.formdateTime(new Date());
             if (format.compareTo(user.getExpireTime())>0) {
                 //登录失败 时效过期
                 System.out.println("format.compareTo(user.getExpireTime()) = " + format.compareTo(user.getExpireTime()));
