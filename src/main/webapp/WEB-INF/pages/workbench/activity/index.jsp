@@ -22,6 +22,91 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script type="text/javascript">
 
 	$(function(){
+
+
+		//创建 按钮的点击事件
+		$("#createActivityBtn").click(function (){
+			//初始化工作
+		//	任意js代码
+
+
+			$("#createActivityModal").modal("show");
+
+		});
+		//保存 按钮的点击事件
+		$("#savaCreateActivityBtn").click(function (){
+		//	收集参数
+		var owner = $("#create-marketActivityOwner").val();
+			var name = $.trim($("#create-marketActivityName").val());
+			var startDate = $.trim($("#create-startTime").val());
+			var endDate = $.trim($("#create-endTime").val());
+			var cost = $.trim($("#create-cost").val());
+			var descrition = $.trim($("#create-descrition").val());
+		//	表单验证
+			if (owner==""){
+				alert("所有者不能为空")
+			}
+			if (name==""){
+				alert("名称不能为空")
+			}
+			if (startDate!=""&&endDate!=""){
+			//	制定日期规范 开始 >结束
+				if (endDate<startDate){
+					alert("结束日期不能小于开始日期")
+				}
+			}
+		//	正则表达式 验证成本值为正整数
+			var RegNum = /^(([1-9]\d*)|0)$/;
+			if (!RegNum.test(cost)){
+				alert("成本只能为非负整数");
+				return;
+			}
+			debugger;
+		//	发送请求
+			$.ajax({
+				url:"workbench/activity/saveCreateActivity.do",
+				data:{
+					owner:owner,
+					name:name,
+					startDate:startDate,
+					endDate:endDate,
+					cost:cost,
+					descrition:descrition
+
+
+
+				},
+				type:'post',
+				dataType:'json',
+				async:false,
+
+				success : function(r){
+
+
+
+					if (r.code=="1"){
+
+					//	关闭模态框
+						$("#createActivityModal").modal("hide");
+					}
+					else {
+					//	错误消息提示
+						alert(r.message)
+					//	模块窗口不关闭
+						$("#createActivityModal").modal("show");
+					}
+
+				},
+				error : function (r){
+					alert(11111)
+				}
+
+			})
+
+
+
+		})
+
 		
 		
 		
@@ -79,9 +164,9 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             </div>
                         </div>
 						<div class="form-group">
-							<label for="create-describe" class="col-sm-2 control-label">描述</label>
+							<label for="create-descrition" class="col-sm-2 control-label">描述</label>
 							<div class="col-sm-10" style="width: 81%;">
-								<textarea class="form-control" rows="3" id="create-describe"></textarea>
+								<textarea class="form-control" rows="3" id="create-descrition"></textarea>
 							</div>
 						</div>
 						
@@ -90,7 +175,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="savaCreateActivityBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -248,9 +333,10 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-primary" id="createActivityBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importActivityModal" ><span class="glyphicon glyphicon-import"></span> 上传列表数据（导入）</button>

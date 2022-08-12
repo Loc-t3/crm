@@ -3,12 +3,13 @@ package com.usercom.crm.workbench.controller;
 import com.usercom.crm.commons.constant.constant;
 import com.usercom.crm.commons.domain.ReturnObject;
 import com.usercom.crm.commons.utils.DateUtils;
-import com.usercom.crm.commons.utils.UUIDUtil;
+import com.usercom.crm.commons.utils.UUIDUtils;
 import com.usercom.crm.settings.domain.User;
 import com.usercom.crm.settings.service.UserService;
+import com.usercom.crm.settings.service.impl.UserServiceImpl;
 import com.usercom.crm.workbench.domain.Activity;
 import com.usercom.crm.workbench.service.ActivityService;
-import org.apache.poi.ss.usermodel.DateUtil;
+import com.usercom.crm.workbench.service.impl.ActivityServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +23,11 @@ import java.util.List;
 @Controller
 public class ActivityController {
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     @Autowired(required = false)
     private Activity activity;
     @Autowired
-    private ActivityService activityService;
+    private ActivityServiceImpl activityService;
 
 
     @RequestMapping("/workbench/activity/index.do")
@@ -45,10 +46,11 @@ public class ActivityController {
 /*多态的思想 返回值为返回值的父类*/
     @RequestMapping("/workbench/activity/saveCreateActivity.do")
     @ResponseBody
-    public Object saveCreateActivity(Activity activity, HttpSession session){
+
+    public  Object saveCreateActivity(Activity activity, HttpSession session){
          User user = (User) session.getAttribute(constant.SESSION_USER);
         //封装参数
-        activity.setId(UUIDUtil.getuuid());
+        activity.setId(UUIDUtils.getuuid());
         activity.setCreateTime(DateUtils.formdateTime(new Date()));
         activity.setCreateBy(user.getId());
         ReturnObject re          = new ReturnObject();
@@ -71,7 +73,7 @@ public class ActivityController {
         }
 
 
-        return null;
+        return re;
 
     }
 

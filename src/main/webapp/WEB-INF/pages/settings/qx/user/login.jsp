@@ -56,6 +56,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							success:function (data) {
 								//获取状态码
 								if (data.code=="1"){
+
 									//跳转至主业务界面
 									window.location.href="workbench/index.do"
 

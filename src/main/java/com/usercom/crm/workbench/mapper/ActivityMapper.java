@@ -1,6 +1,9 @@
 package com.usercom.crm.workbench.mapper;
 
 import com.usercom.crm.workbench.domain.Activity;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+
 
 public interface ActivityMapper {
     /**
