@@ -98,13 +98,24 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 				},
 				error : function (r){
-					alert(11111)
+
 				}
 
 			})
 
 
 
+		});
+		//    当容器加载完毕后，对容器进行调用工具函数
+		// if ("input[name='myDate']").datetimepicker({
+		$(".myDate").datetimepicker({
+			language:"zh-CN",//
+			format:'yyyy-mm-dd',
+			minView:'month',
+			initialDate:new Date(),
+			autoclose:true, //当选择完毕日期后自动关闭日历插件
+			todayBtn:true,// 是否显示今天的时间 默认为false
+			clearBtn:true,//显示清空按钮
 		})
 
 		
@@ -149,11 +160,11 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control myDate" name="myDate" id="create-startTime" readonly>
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control myDate" name="myDate" id="create-endTime" readonly>
 							</div>
 						</div>
                         <div class="form-group">

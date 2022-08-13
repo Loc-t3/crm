@@ -35,7 +35,7 @@
     <!--声明mybatis的mapper注解扫描器，扫描 @MapperScan注解 自动生成代码对象-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="scannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-      <property name="basePackage" value="com.usercom.crm.settings.mapper,
+        <property name="basePackage" value="com.usercom.crm.settings.mapper,
                                             com.usercom.crm.workbench.mapper"/>
     </bean>
 
