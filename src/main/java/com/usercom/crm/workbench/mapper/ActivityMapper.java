@@ -1,8 +1,9 @@
 package com.usercom.crm.workbench.mapper;
 
 import com.usercom.crm.workbench.domain.Activity;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 
 public interface ActivityMapper {
@@ -55,4 +56,19 @@ public interface ActivityMapper {
      * @mbggenerated Mon Aug 08 07:28:34 CST 2022
      */
     int insertActivity(Activity activity);
+
+    /***
+     * 分页查询
+     * @return
+     * @param map
+     */
+    List<Activity> selectActivityByConditionForPage(Map<String,Object> map);
+
+    /***
+     * 依据查询条件进行查询
+     * @param map
+     * @return
+     */
+
+    int selectCountOfActivityByCondition(Map<String,Object> map);
 }

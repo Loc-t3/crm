@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ActivityController {
@@ -76,5 +78,30 @@ public class ActivityController {
         return re;
 
     }
+@RequestMapping("/workbench/activity/queryActivityByConditionForPage.do")
+@ResponseBody
+    public Object queryActivityByConditionForPage(String name,String owner,String startDate,String endDate,
+                                    Integer pageNo,Integer pageSize){
+//        封装参数
+    Map<String,Object> map  =new HashMap<>();
+//    此处的map中的key值需要和mapper.xml中sql查询的字段名称保持一致
+    map.put("name",name);
+    map.put("owner",owner);
+    map.put("startDate",startDate);
+    map.put("endDate",endDate);
+    map.put("beginNo",(pageNo-1)*pageSize);
+    map.put("pageSize",pageSize);
+//    调用Service方法 查询数据
+    List<Activity> activitieList = activityService.queryActivityByConditionForPage(map);
+    int tatolRow = activityService.queryCountOfActivityByCondition(map);
+//根据查询结果 返回响应信息
+    Map<String,Object> map1 = new HashMap<>();
+    map1.put("activitieList",activitieList);
+    map1.put("tatolRow",tatolRow);
+
+    return map1;
+
+
+}
 
 }

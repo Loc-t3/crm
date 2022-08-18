@@ -118,6 +118,61 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			clearBtn:true,//显示清空按钮
 		})
 
+
+	//	当活动主页面加载完成后 查询所有数据的第一页和所有数据的总条数
+	//	收集参数
+		var name=$("#query-name").val();
+		var owner = $("#query-owner").val();
+		var startDate=$("#query-startDate").val();
+		var endDate = $("#query-endDate").val();
+		var pageNo = 1;
+		var pageSize =10;
+	//	发送请求
+		$.ajax({
+			url:"workbench/activity/queryActivityByConditionForPage.do",
+			data:{
+				name:name,
+				owner:owner,
+				startDate:startDate,
+				endDate:endDate,
+				pageNo:pageNo,
+				pageSize:pageSize
+
+
+			},
+			type: "post",
+			dataType: "json",
+			success:function (r){
+			//	显示总条数  将请求到的后台的返回数据赋值
+				$("tatolRowB").text = r.totalRows;
+			//遍历 acticityList 循环所有行数据  遍历js中的变量用$.each();   遍历作用域中的数据用el表达式的foreach
+			//	js作为一个弱类型语言法则 可以实现方法中实现 function
+			//	index 为each 循环的下标    obj循环变量 获取每次遍历的数据
+				var htmlStr = "";
+				$.each(r.activitieList,function (index,obj) {
+					htmlStr+="<tr class=\"active\">";
+					htmlStr+="	<td><input type=\"checkbox\" value=\""+obj.id+"\"/></td>";
+					htmlStr+="	<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.html';\">"+obj.name+"</a></td>";
+					htmlStr+="	<td>"+obj.owner+"</td>";
+					htmlStr+="	<td>"+obj.startDate+"</td>";
+					htmlStr+="	<td>"+obj.endDate+"</td>";
+					htmlStr+="	</tr>";
+
+
+					
+				});
+				// 在指定的标签中显示jsp页面片段
+				//html（）  覆盖显示
+				//append（）追加显示
+				$("tBody").html(htmlStr)
+
+
+			}
+
+
+		})
+
+
 		
 		
 		
@@ -312,14 +367,14 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				  
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">名称</div>
+				      <div class="input-group-addon" id="query-name">名称</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">所有者</div>
+				      <div class="input-group-addon" id="query-owner">所有者</div>
 				      <input class="form-control" type="text">
 				    </div>
 				  </div>
@@ -327,13 +382,13 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">开始日期</div>
+				      <div class="input-group-addon" id="query-startDate">开始日期</div>
 					  <input class="form-control" type="text" id="startTime" />
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">结束日期</div>
+				      <div class="input-group-addon" id="query-endDate">结束日期</div>
 					  <input class="form-control" type="text" id="endTime">
 				    </div>
 				  </div>
@@ -367,7 +422,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="active">
+						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
                             <td>zhangsan</td>
@@ -380,14 +435,14 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
                             <td>zhangsan</td>
                             <td>2020-10-10</td>
                             <td>2020-10-20</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>
 			
 			<div style="height: 50px; position: relative;top: 30px;">
 				<div>
-					<button type="button" class="btn btn-default" style="cursor: default;">共<b>50</b>条记录</button>
+					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="tatolRowB">50</b>条记录</button>
 				</div>
 				<div class="btn-group" style="position: relative;top: -34px; left: 110px;">
 					<button type="button" class="btn btn-default" style="cursor: default;">显示</button>
