@@ -12,5 +12,7 @@ public interface ActivityService {
     List<Activity> queryActivityByConditionForPage(Map<String,Object> map);
 //    根据不同条件查询获取的总数目
     int queryCountOfActivityByCondition(Map<String,Object> map);
+//根据id批量删除活动信息
+    int deleteActivityByids(String[] ids);
 
 }

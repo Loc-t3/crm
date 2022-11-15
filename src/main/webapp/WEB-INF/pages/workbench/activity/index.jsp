@@ -13,11 +13,14 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 <link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-
+<link href="jquery/bs_pagination-master/css/jquery.bs_pagination.min.css">
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+
+		<script type="text/javascript" src="jquery/bs_pagination-master/js/jquery.bs_pagination.min.js"></script>
+		<script type="text/javascript" src="jquery/bs_pagination-master/localization/en.js"></script>
 
 <script type="text/javascript">
 
@@ -27,6 +30,8 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		//创建 按钮的点击事件
 		$("#createActivityBtn").click(function (){
 			//初始化工作
+			//重置表单
+			// $("#createActivityForm").get(0).reset();
 		//	任意js代码
 
 
@@ -72,18 +77,11 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					endDate:endDate,
 					cost:cost,
 					descrition:descrition
-
-
-
 				},
 				type:'post',
 				dataType:'json',
 				async:false,
-
 				success : function(r){
-
-
-
 					if (r.code=="1"){
 
 					//	关闭模态框
@@ -119,15 +117,83 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		})
 
 
+		//当市场活动主页面加载完成，查询所有数据的第一页以及所有数据的总条数,默认每页显示10条
+		queryActivityByConditionForPage(1,10);
+
+
+	//	给查询按钮添加单击事件
+		$("#queryActivityBtn").click(function () {
+		//	查询所有符合条件数据的第一页以及所有条件数据的总条数
+			queryActivityByConditionForPage(1,$("#demo_pag1").bs_pagination('getOption', 'rowsPerPage'));
+		})
+	//	给全选按钮添加单击事件
+
+		$("#chckAll").click(function () {
+			//	查询所有符合条件数据的第一页以及所有条件数据的总条数
+			$("#tBody input[type='checkbox']").prop("checked",this.checked)
+		})
+	//	当列表全选后 给 全选按钮添加上勾选
+		$("#tBody").on('click',"input[type='checkbox']",function () {
+			if ($("#tBody input[type='checkbox']").size()==$("#tBody input[type='checkbox']:checked").size()){
+				$("#chckAll").prop("checked",true)
+			}else{
+				$("#chckAll").prop("checked",false)
+			}
+		})
+	//	给删除按钮添加事件
+		 	$('#deleteActivityBtn').click(function () {
+
+			//	收集参数
+			//	获取列表的所有被选中的checkbox
+				var checkids = $("#tBody input[type='checkbox']:checked");
+				if (checkids.size()==0){
+					alert("请选择要删除的市场活动")
+					return;
+				}
+				if (window.confirm("确定要删除吗？")){
+					var ids =""
+					$.each(checkids,function (){
+						ids+="id="+this.value+"&";
+					})
+					ids = ids.substr(0,ids.length-1);
+				//	发送请求
+					 $.ajax({
+						 url:"workbench/activity/DeleteActivityByids.do",
+						 data:ids,
+						 type:"post",
+						 dataType:"json",
+						 success:function (data){
+							 if(data.code=="1"){
+								 //刷新市场活动列表,显示第一页数据,保持每页显示条数不变
+								 queryActivityByConditionForPage(1,10);
+							 }else{
+								 //提示信息
+								 alert(data.message);
+							 }
+						 }
+
+
+					 })
+
+				}
+
+			})
+
+		
+		
+	});
+
 	//	当活动主页面加载完成后 查询所有数据的第一页和所有数据的总条数
-	//	收集参数
+	function queryActivityByConditionForPage(pageNo,pageSize) {
+
+		//	收集参数
 		var name=$("#query-name").val();
 		var owner = $("#query-owner").val();
 		var startDate=$("#query-startDate").val();
 		var endDate = $("#query-endDate").val();
 		var pageNo = 1;
 		var pageSize =10;
-	//	发送请求
+		//	发送请求
 		$.ajax({
 			url:"workbench/activity/queryActivityByConditionForPage.do",
 			data:{
@@ -143,11 +209,11 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			type: "post",
 			dataType: "json",
 			success:function (r){
-			//	显示总条数  将请求到的后台的返回数据赋值
+				//	显示总条数  将请求到的后台的返回数据赋值
 				$("tatolRowB").text = r.totalRows;
-			//遍历 acticityList 循环所有行数据  遍历js中的变量用$.each();   遍历作用域中的数据用el表达式的foreach
-			//	js作为一个弱类型语言法则 可以实现方法中实现 function
-			//	index 为each 循环的下标    obj循环变量 获取每次遍历的数据
+				//遍历 acticityList 循环所有行数据  遍历js中的变量用$.each();   遍历作用域中的数据用el表达式的foreach
+				//	js作为一个弱类型语言法则 可以实现方法中实现 function
+				//	index 为each 循环的下标    obj循环变量 获取每次遍历的数据
 				var htmlStr = "";
 				$.each(r.activitieList,function (index,obj) {
 					htmlStr+="<tr class=\"active\">";
@@ -159,12 +225,47 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					htmlStr+="	</tr>";
 
 
-					
+
 				});
 				// 在指定的标签中显示jsp页面片段
 				//html（）  覆盖显示
 				//append（）追加显示
-				$("tBody").html(htmlStr)
+				$("#tBody").html(htmlStr)
+			//	当翻页时 对全选进行重新赋值
+				$("#chckAll").prop("checked",false);
+
+			//	计算总页数
+				var totalPages =1;
+				if(data.totalRows%pageSize==0){
+					totalPages = data.totalRows/pageSize;
+				}else{
+					totalPages =data.totalRows/pageSize+1;
+				}
+
+				//对容器调用bs_pagination工具函数，显示翻页信息
+				$("#demo_pag1").bs_pagination({
+					currentPage:pageNo,//当前页号,相当于pageNo
+
+					rowsPerPage:pageSize,//每页显示条数,相当于pageSize
+					totalRows:data.totalRows,//总条数
+					totalPages: totalPages,  //总页数,必填参数.
+
+					visiblePageLinks:5,//最多可以显示的卡片数
+
+					showGoToPage:true,//是否显示"跳转到"部分,默认true--显示
+					showRowsPerPage:true,//是否显示"每页显示条数"部分。默认true--显示
+					showRowsInfo:true,//是否显示记录的信息，默认true--显示
+
+					//用户每次切换页号，都自动触发本函数;
+					//每次返回切换页号之后的pageNo和pageSize
+					onChangePage: function(event,pageObj) { // returns page_num and rows_per_page after a link has clicked
+						//js代码
+						//alert(pageObj.currentPage);
+						//alert(pageObj.rowsPerPage);
+						queryActivityByConditionForPage(pageObj.currentPage,pageObj.rowsPerPage);
+					}
+				});
+
 
 
 			}
@@ -172,12 +273,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		})
 
-
-		
-		
-		
-	});
-	
+	}
 </script>
 </head>
 <body>
@@ -367,33 +463,33 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				  
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon" id="query-name">名称</div>
-				      <input class="form-control" type="text">
+				      <div class="input-group-addon" >名称</div>
+				      <input class="form-control" type="text" id="query-name">
 				    </div>
 				  </div>
 				  
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon" id="query-owner">所有者</div>
-				      <input class="form-control" type="text">
+				      <div class="input-group-addon" >所有者</div>
+				      <input class="form-control" type="text" id="query-owner">
 				    </div>
 				  </div>
 
 
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon" id="query-startDate">开始日期</div>
-					  <input class="form-control" type="text" id="startTime" />
+				      <div class="input-group-addon" >开始日期</div>
+					  <input class="form-control" type="text" id="startTime" id="query-startDate"/>
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon" id="query-endDate">结束日期</div>
-					  <input class="form-control" type="text" id="endTime">
+				      <div class="input-group-addon" >结束日期</div>
+					  <input class="form-control" type="text" id="endTime" id="query-endDate">
 				    </div>
 				  </div>
 				  
-				  <button type="submit" class="btn btn-default">查询</button>
+				  <button  class="btn btn-default" id="queryActivityBtn">查询</button>
 				  
 				</form>
 			</div>
@@ -401,7 +497,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="createActivityBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deleteActivityBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">
@@ -414,14 +510,14 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<table class="table table-hover">
 					<thead>
 						<tr style="color: #B3B3B3;">
-							<td><input type="checkbox" /></td>
+							<td><input type="checkbox" id="chckAll"/></td>
 							<td>名称</td>
                             <td>所有者</td>
 							<td>开始日期</td>
 							<td>结束日期</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="tBody">
 						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">发传单</a></td>
@@ -439,8 +535,8 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</tbody>
 				</table>
 			</div>
-			
-			<div style="height: 50px; position: relative;top: 30px;">
+			<div id="demo_pag1"></div>
+			<%--<div style="height: 50px; position: relative;top: 30px;">
 				<div>
 					<button type="button" class="btn btn-default" style="cursor: default;">共<b id="tatolRowB">50</b>条记录</button>
 				</div>
@@ -473,7 +569,7 @@ String basepath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						</ul>
 					</nav>
 				</div>
-			</div>
+			</div>--%>
 			
 		</div>
 		

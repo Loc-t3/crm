@@ -252,4 +252,12 @@ select count(*)
     </where>
 
   </select>
+
+<!--  根据id批量删除活动信息  item为循环遍历名-->
+  <delete id="deleteActivityByid" parameterType="string">
+    delete  from tbl_activity where id in 
+    <foreach collection="array" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </delete>
 </mapper>
